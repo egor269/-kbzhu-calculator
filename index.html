@@ -1,0 +1,516 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Калькулятор КБЖУ - Персональный расчет питания</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/css/all.min.css">
+    <style>
+        .gradient-bg {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+        
+        .card-gradient {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+        }
+        
+        .result-card {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+        }
+        
+        .input-focus:focus {
+            box-shadow: 0 0 0 3px rgba(66, 153, 225, 0.3);
+        }
+        
+        .slider {
+            -webkit-appearance: none;
+            appearance: none;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 12px;
+            height: 8px;
+            outline: none;
+        }
+        
+        .slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 24px;
+            height: 24px;
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            border-radius: 50%;
+            cursor: pointer;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+        }
+        
+        .slider::-moz-range-thumb {
+            width: 24px;
+            height: 24px;
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            border-radius: 50%;
+            cursor: pointer;
+            border: none;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+        }
+        
+        .fade-in {
+            animation: fadeIn 0.5s ease-in-out;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .bounce-in {
+            animation: bounceIn 0.6s ease-out;
+        }
+        
+        @keyframes bounceIn {
+            0% { transform: scale(0.3); opacity: 0; }
+            50% { transform: scale(1.05); }
+            70% { transform: scale(0.9); }
+            100% { transform: scale(1); opacity: 1; }
+        }
+        
+        .glow {
+            box-shadow: 0 0 20px rgba(102, 126, 234, 0.5);
+        }
+    </style>
+</head>
+<body class="min-h-screen gradient-bg">
+    <div class="container mx-auto px-4 py-8">
+        <div class="max-w-4xl mx-auto">
+            <!-- Заголовок -->
+            <div class="text-center mb-8 fade-in">
+                <h1 class="text-4xl font-bold text-white mb-2">
+                    <i class="fas fa-calculator mr-3"></i>
+                    Калькулятор КБЖУ
+                </h1>
+                <p class="text-blue-100 text-lg">Персональный расчет питания для достижения ваших целей</p>
+            </div>
+
+            <div class="grid lg:grid-cols-2 gap-8">
+                <!-- Форма ввода данных -->
+                <div class="bg-white bg-opacity-20 backdrop-blur-lg rounded-3xl p-8 shadow-2xl fade-in">
+                    <h2 class="text-2xl font-bold text-white mb-6">
+                        <i class="fas fa-user mr-2"></i>
+                        Ваши данные
+                    </h2>
+                    
+                    <form id="kbzhuForm" class="space-y-6">
+                        <!-- Пол -->
+                        <div>
+                            <label class="block text-white font-semibold mb-3">
+                                <i class="fas fa-venus-mars mr-2"></i>
+                                Пол
+                            </label>
+                            <div class="flex space-x-4">
+                                <label class="flex items-center text-white cursor-pointer">
+                                    <input type="radio" name="gender" value="male" class="mr-2 w-4 h-4">
+                                    <span class="ml-2">Мужской</span>
+                                </label>
+                                <label class="flex items-center text-white cursor-pointer">
+                                    <input type="radio" name="gender" value="female" class="mr-2 w-4 h-4">
+                                    <span class="ml-2">Женский</span>
+                                </label>
+                            </div>
+                        </div>
+
+                        <!-- Возраст -->
+                        <div>
+                            <label class="block text-white font-semibold mb-2">
+                                <i class="fas fa-birthday-cake mr-2"></i>
+                                Возраст (лет)
+                            </label>
+                            <input type="number" id="age" min="10" max="100" 
+                                   class="w-full px-4 py-3 rounded-xl border-0 bg-white bg-opacity-90 input-focus transition-all duration-300"
+                                   placeholder="Введите возраст">
+                        </div>
+
+                        <!-- Вес -->
+                        <div>
+                            <label class="block text-white font-semibold mb-2">
+                                <i class="fas fa-weight mr-2"></i>
+                                Вес (кг)
+                            </label>
+                            <input type="number" id="weight" min="30" max="300" step="0.1"
+                                   class="w-full px-4 py-3 rounded-xl border-0 bg-white bg-opacity-90 input-focus transition-all duration-300"
+                                   placeholder="Введите вес">
+                        </div>
+
+                        <!-- Рост -->
+                        <div>
+                            <label class="block text-white font-semibold mb-2">
+                                <i class="fas fa-ruler-vertical mr-2"></i>
+                                Рост (см)
+                            </label>
+                            <input type="number" id="height" min="100" max="250"
+                                   class="w-full px-4 py-3 rounded-xl border-0 bg-white bg-opacity-90 input-focus transition-all duration-300"
+                                   placeholder="Введите рост">
+                        </div>
+
+                        <!-- Уровень активности -->
+                        <div>
+                            <label class="block text-white font-semibold mb-2">
+                                <i class="fas fa-dumbbell mr-2"></i>
+                                Уровень активности
+                            </label>
+                            <select id="activity" class="w-full px-4 py-3 rounded-xl border-0 bg-white bg-opacity-90 input-focus transition-all duration-300">
+                                <option value="">Выберите уровень активности</option>
+                                <option value="1.2">Минимальная активность (сидячий образ жизни)</option>
+                                <option value="1.375">Легкая активность (легкие упражнения 1-3 раза в неделю)</option>
+                                <option value="1.55">Умеренная активность (умеренные упражнения 3-5 раз в неделю)</option>
+                                <option value="1.725">Высокая активность (интенсивные упражнения 6-7 раз в неделю)</option>
+                                <option value="1.9">Очень высокая активность (физическая работа + упражнения)</option>
+                            </select>
+                        </div>
+
+                        <!-- Цель -->
+                        <div>
+                            <label class="block text-white font-semibold mb-3">
+                                <i class="fas fa-target mr-2"></i>
+                                Ваша цель
+                            </label>
+                            <div class="space-y-2">
+                                <label class="flex items-center text-white cursor-pointer">
+                                    <input type="radio" name="goal" value="lose" class="mr-2 w-4 h-4">
+                                    <span class="ml-2">Похудение</span>
+                                </label>
+                                <label class="flex items-center text-white cursor-pointer">
+                                    <input type="radio" name="goal" value="maintain" class="mr-2 w-4 h-4">
+                                    <span class="ml-2">Поддержание веса</span>
+                                </label>
+                                <label class="flex items-center text-white cursor-pointer">
+                                    <input type="radio" name="goal" value="gain" class="mr-2 w-4 h-4">
+                                    <span class="ml-2">Набор веса</span>
+                                </label>
+                            </div>
+                        </div>
+
+                        <!-- Ползунок для похудения -->
+                        <div id="weightLossSlider" class="hidden">
+                            <label class="block text-white font-semibold mb-3">
+                                <i class="fas fa-chart-line mr-2"></i>
+                                Интенсивность похудения
+                            </label>
+                            <div class="bg-white bg-opacity-20 p-4 rounded-xl">
+                                <input type="range" id="deficitSlider" min="10" max="50" value="20" 
+                                       class="w-full slider mb-4">
+                                <div class="flex justify-between text-sm text-white mb-2">
+                                    <span>10% - Легкое</span>
+                                    <span>30% - Умеренное</span>
+                                    <span>50% - Интенсивное</span>
+                                </div>
+                                <div class="text-center text-white">
+                                    <span class="text-lg font-bold">Дефицит: <span id="deficitPercent">20</span>%</span>
+                                    <br>
+                                    <span class="text-sm">(<span id="deficitCalories">0</span> калорий)</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <button type="submit" class="w-full bg-gradient-to-r from-pink-500 to-violet-500 text-white font-bold py-4 px-6 rounded-xl hover:from-pink-600 hover:to-violet-600 transition-all duration-300 transform hover:scale-105 glow">
+                            <i class="fas fa-calculator mr-2"></i>
+                            Рассчитать КБЖУ
+                        </button>
+                    </form>
+                </div>
+
+                <!-- Результаты -->
+                <div class="space-y-6">
+                    <div id="results" class="hidden">
+                        <!-- Основные показатели -->
+                        <div class="bg-white bg-opacity-20 backdrop-blur-lg rounded-3xl p-6 shadow-2xl bounce-in">
+                            <h3 class="text-2xl font-bold text-white mb-4">
+                                <i class="fas fa-chart-bar mr-2"></i>
+                                Ваши показатели
+                            </h3>
+                            
+                            <div class="grid grid-cols-2 gap-4">
+                                <div class="text-center">
+                                    <div class="text-3xl font-bold text-white mb-1" id="bmrResult">0</div>
+                                    <div class="text-sm text-blue-100">Базовый метаболизм</div>
+                                </div>
+                                <div class="text-center">
+                                    <div class="text-3xl font-bold text-white mb-1" id="caloriesResult">0</div>
+                                    <div class="text-sm text-blue-100">Калорий в день</div>
+                                </div>
+                                <div class="text-center">
+                                    <div class="text-3xl font-bold text-white mb-1" id="bmiResult">0</div>
+                                    <div class="text-sm text-blue-100">ИМТ</div>
+                                </div>
+                                <div class="text-center">
+                                    <div class="text-lg font-bold text-white mb-1" id="bmiStatus">-</div>
+                                    <div class="text-sm text-blue-100">Статус</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Макронутриенты -->
+                        <div class="bg-white bg-opacity-20 backdrop-blur-lg rounded-3xl p-6 shadow-2xl bounce-in">
+                            <h3 class="text-2xl font-bold text-white mb-4">
+                                <i class="fas fa-utensils mr-2"></i>
+                                Макронутриенты
+                            </h3>
+                            
+                            <div class="space-y-4">
+                                <div class="flex items-center justify-between bg-white bg-opacity-10 p-4 rounded-xl">
+                                    <div class="flex items-center">
+                                        <div class="w-4 h-4 bg-red-400 rounded-full mr-3"></div>
+                                        <span class="text-white font-semibold">Белки</span>
+                                    </div>
+                                    <div class="text-right">
+                                        <div class="text-2xl font-bold text-white" id="proteinResult">0</div>
+                                        <div class="text-sm text-blue-100">граммов</div>
+                                    </div>
+                                </div>
+                                
+                                <div class="flex items-center justify-between bg-white bg-opacity-10 p-4 rounded-xl">
+                                    <div class="flex items-center">
+                                        <div class="w-4 h-4 bg-yellow-400 rounded-full mr-3"></div>
+                                        <span class="text-white font-semibold">Жиры</span>
+                                    </div>
+                                    <div class="text-right">
+                                        <div class="text-2xl font-bold text-white" id="fatResult">0</div>
+                                        <div class="text-sm text-blue-100">граммов</div>
+                                    </div>
+                                </div>
+                                
+                                <div class="flex items-center justify-between bg-white bg-opacity-10 p-4 rounded-xl">
+                                    <div class="flex items-center">
+                                        <div class="w-4 h-4 bg-green-400 rounded-full mr-3"></div>
+                                        <span class="text-white font-semibold">Углеводы</span>
+                                    </div>
+                                    <div class="text-right">
+                                        <div class="text-2xl font-bold text-white" id="carbResult">0</div>
+                                        <div class="text-sm text-blue-100">граммов</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Рекомендации -->
+                        <div class="bg-white bg-opacity-20 backdrop-blur-lg rounded-3xl p-6 shadow-2xl bounce-in">
+                            <h3 class="text-2xl font-bold text-white mb-4">
+                                <i class="fas fa-lightbulb mr-2"></i>
+                                Рекомендации
+                            </h3>
+                            <div id="recommendations" class="text-white space-y-2">
+                                <!-- Рекомендации будут добавлены динамически -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Элементы DOM
+        const form = document.getElementById('kbzhuForm');
+        const weightLossSlider = document.getElementById('weightLossSlider');
+        const deficitSlider = document.getElementById('deficitSlider');
+        const deficitPercent = document.getElementById('deficitPercent');
+        const deficitCalories = document.getElementById('deficitCalories');
+        const results = document.getElementById('results');
+        
+        // Результаты
+        const bmrResult = document.getElementById('bmrResult');
+        const caloriesResult = document.getElementById('caloriesResult');
+        const bmiResult = document.getElementById('bmiResult');
+        const bmiStatus = document.getElementById('bmiStatus');
+        const proteinResult = document.getElementById('proteinResult');
+        const fatResult = document.getElementById('fatResult');
+        const carbResult = document.getElementById('carbResult');
+        const recommendations = document.getElementById('recommendations');
+
+        // Обработчики событий
+        document.querySelectorAll('input[name="goal"]').forEach(radio => {
+            radio.addEventListener('change', function() {
+                if (this.value === 'lose') {
+                    weightLossSlider.classList.remove('hidden');
+                    weightLossSlider.classList.add('fade-in');
+                } else {
+                    weightLossSlider.classList.add('hidden');
+                }
+                if (validateForm()) {
+                    calculateKBZHU();
+                }
+            });
+        });
+
+        deficitSlider.addEventListener('input', function() {
+            deficitPercent.textContent = this.value;
+            updateDeficitCalories();
+            if (validateForm()) {
+                calculateKBZHU();
+            }
+        });
+
+        // Валидация и расчет при изменении полей
+        ['age', 'weight', 'height', 'activity'].forEach(id => {
+            document.getElementById(id).addEventListener('input', function() {
+                if (validateForm()) {
+                    calculateKBZHU();
+                }
+            });
+        });
+
+        document.querySelectorAll('input[name="gender"]').forEach(radio => {
+            radio.addEventListener('change', function() {
+                if (validateForm()) {
+                    calculateKBZHU();
+                }
+            });
+        });
+
+        form.addEventListener('submit', function(e) {
+            e.preventDefault();
+            if (validateForm()) {
+                calculateKBZHU();
+            }
+        });
+
+        function validateForm() {
+            const gender = document.querySelector('input[name="gender"]:checked');
+            const age = document.getElementById('age').value;
+            const weight = document.getElementById('weight').value;
+            const height = document.getElementById('height').value;
+            const activity = document.getElementById('activity').value;
+            const goal = document.querySelector('input[name="goal"]:checked');
+
+            return gender && age && weight && height && activity && goal;
+        }
+
+        function updateDeficitCalories() {
+            const baseCalories = calculateBaseCalories();
+            if (baseCalories > 0) {
+                const deficit = Math.round(baseCalories * (deficitSlider.value / 100));
+                deficitCalories.textContent = deficit;
+            }
+        }
+
+        function calculateBaseCalories() {
+            const gender = document.querySelector('input[name="gender"]:checked')?.value;
+            const age = parseFloat(document.getElementById('age').value);
+            const weight = parseFloat(document.getElementById('weight').value);
+            const height = parseFloat(document.getElementById('height').value);
+            const activity = parseFloat(document.getElementById('activity').value);
+
+            if (!gender || !age || !weight || !height || !activity) {
+                return 0;
+            }
+
+            // Формула Миффлина-Сан Жеора
+            let bmr;
+            if (gender === 'male') {
+                bmr = 10 * weight + 6.25 * height - 5 * age + 5;
+            } else {
+                bmr = 10 * weight + 6.25 * height - 5 * age - 161;
+            }
+
+            return Math.round(bmr * activity);
+        }
+
+        function calculateKBZHU() {
+            const gender = document.querySelector('input[name="gender"]:checked').value;
+            const age = parseFloat(document.getElementById('age').value);
+            const weight = parseFloat(document.getElementById('weight').value);
+            const height = parseFloat(document.getElementById('height').value);
+            const activity = parseFloat(document.getElementById('activity').value);
+            const goal = document.querySelector('input[name="goal"]:checked').value;
+
+            // Базовый метаболизм (BMR)
+            let bmr;
+            if (gender === 'male') {
+                bmr = 10 * weight + 6.25 * height - 5 * age + 5;
+            } else {
+                bmr = 10 * weight + 6.25 * height - 5 * age - 161;
+            }
+
+            // Суточная норма калорий
+            let calories = bmr * activity;
+
+            // Корректировка по цели
+            if (goal === 'lose') {
+                const deficit = parseFloat(deficitSlider.value) / 100;
+                calories = calories * (1 - deficit);
+            } else if (goal === 'gain') {
+                calories = calories * 1.2;
+            }
+
+            // Макронутриенты
+            const protein = Math.round((calories * 0.3) / 4);
+            const fat = Math.round((calories * 0.25) / 9);
+            const carbs = Math.round((calories * 0.45) / 4);
+
+            // ИМТ
+            const bmi = weight / Math.pow(height / 100, 2);
+            let bmiStatusText;
+            if (bmi < 18.5) {
+                bmiStatusText = 'Недостаток веса';
+            } else if (bmi < 25) {
+                bmiStatusText = 'Нормальный вес';
+            } else if (bmi < 30) {
+                bmiStatusText = 'Избыточный вес';
+            } else {
+                bmiStatusText = 'Ожирение';
+            }
+
+            // Отображение результатов
+            bmrResult.textContent = Math.round(bmr);
+            caloriesResult.textContent = Math.round(calories);
+            bmiResult.textContent = bmi.toFixed(1);
+            bmiStatus.textContent = bmiStatusText;
+            proteinResult.textContent = protein;
+            fatResult.textContent = fat;
+            carbResult.textContent = carbs;
+
+            // Рекомендации
+            generateRecommendations(goal, bmi, calories);
+
+            // Показать результаты
+            results.classList.remove('hidden');
+        }
+
+        function generateRecommendations(goal, bmi, calories) {
+            const recs = [];
+            
+            if (goal === 'lose') {
+                recs.push('🏃‍♂️ Добавьте кардио-упражнения 3-4 раза в неделю');
+                recs.push('🥗 Увеличьте потребление овощей и белковых продуктов');
+                recs.push('💧 Пейте больше воды - минимум 2 литра в день');
+                recs.push('😴 Обеспечьте качественный сон 7-8 часов');
+            } else if (goal === 'gain') {
+                recs.push('🏋️‍♂️ Сосредоточьтесь на силовых тренировках');
+                recs.push('🥩 Увеличьте потребление белка до 2г на кг веса');
+                recs.push('🍌 Добавьте сложные углеводы в рацион');
+                recs.push('⏰ Питайтесь часто - 5-6 раз в день');
+            } else {
+                recs.push('⚖️ Поддерживайте текущий режим питания');
+                recs.push('🏃‍♀️ Регулярные физические упражнения');
+                recs.push('🥘 Сбалансированное питание');
+                recs.push('📊 Контролируйте вес раз в неделю');
+            }
+
+            if (bmi < 18.5) {
+                recs.push('⚠️ Рекомендуется консультация с врачом');
+            } else if (bmi > 30) {
+                recs.push('⚠️ Рекомендуется консультация с диетологом');
+            }
+
+            recommendations.innerHTML = recs.map(rec => `<p class="flex items-start"><span class="mr-2">${rec}</span></p>`).join('');
+        }
+    </script>
+</body>
+</html>
+    <script id="html_badge_script1">
+        window.__genspark_remove_badge_link = "https://www.genspark.ai/api/html_badge/" +
+            "remove_badge?token=To%2FBnjzloZ3UfQdcSaYfDmqYexLoFXbG62qFZGYzGnNx%2By8FvFRQdZk55drEI%2F8DSWN19Bjis129N0w2%2FMqSoMQCXHcpTGgT0nHkMw%2FhtA%2F0wmrXjHzUgmUFy6wIaK%2BDLPRxA5N4Ntn7RzQbTOVlWDsfR%2B%2Fo%2FkK9aADyI51m7vAFHzS4ymK%2B5MD88HxcCG5dPX1YRw5wdcvbZCCQAveGat8zwIfVOPxb3AwXg5rcGWnjpWiCdLTNdmYZQruunlCerjKRLJiJyuSEgD%2BTI2%2BavElies9y5IStSw%2Burt4R%2BD%2BBt8ffK7rZW3XY64FAY42IM2Gib%2BIPlBX5JmzX3s9WqZff251FionRg8nC3wbP3lyh0IcA1XzUG2AQXnC%2FYqIySRQA0OltWHi7UnMBXFHHRHzJb%2FCBeY3BaTDePCpf%2B7gA72LZtsgiqkDgyLMXxJfjCGptJEXOvhPiywp63pl%2FgeEfB%2BtHINwdAgJ25o8GUNnM2qns5luFh2R0WmOZO1mYplRo13YtsQQxXCW6Mq4J%2Bg%3D%3D";
+        window.__genspark_locale = "en-US";
+        window.__genspark_token = "To/BnjzloZ3UfQdcSaYfDmqYexLoFXbG62qFZGYzGnNx+y8FvFRQdZk55drEI/8DSWN19Bjis129N0w2/MqSoMQCXHcpTGgT0nHkMw/htA/0wmrXjHzUgmUFy6wIaK+DLPRxA5N4Ntn7RzQbTOVlWDsfR+/o/kK9aADyI51m7vAFHzS4ymK+5MD88HxcCG5dPX1YRw5wdcvbZCCQAveGat8zwIfVOPxb3AwXg5rcGWnjpWiCdLTNdmYZQruunlCerjKRLJiJyuSEgD+TI2+avElies9y5IStSw+urt4R+D+Bt8ffK7rZW3XY64FAY42IM2Gib+IPlBX5JmzX3s9WqZff251FionRg8nC3wbP3lyh0IcA1XzUG2AQXnC/YqIySRQA0OltWHi7UnMBXFHHRHzJb/CBeY3BaTDePCpf+7gA72LZtsgiqkDgyLMXxJfjCGptJEXOvhPiywp63pl/geEfB+tHINwdAgJ25o8GUNnM2qns5luFh2R0WmOZO1mYplRo13YtsQQxXCW6Mq4J+g==";
+    </script>
+    
+    <script id="html_notice_dialog_script" src="https://www.genspark.ai/notice_dialog.js"></script>
+    
